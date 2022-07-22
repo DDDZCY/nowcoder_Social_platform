@@ -38,6 +38,10 @@ public class UserService implements CommunityConstant {
         return userMapper.selectById(id);
     }
 
+    public User findUserByName(String name){
+        return userMapper.selectByUsername(name);
+    }
+
     public Map<String,Object> register(User user) throws MessagingException {
         Map<String,Object> map = new HashMap<>();
 

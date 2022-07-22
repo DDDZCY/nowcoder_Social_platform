@@ -66,7 +66,7 @@
 					<!-- 选项 -->
 					<ul class="nav nav-tabs mb-3">
 						<li class="nav-item">
-							<a class="nav-link position-relative active" href="@{/letter/list}">朋友私信<span class="badge badge-danger" th:text="${unreadLetterCount}">3</span></a>
+							<a class="nav-link position-relative active" th:href="@{/letter/list}">朋友私信<span class="badge badge-danger" th:text="${unreadLetterCount}" th:if="${unreadLetterCount!=0}">3</span></a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link position-relative" href="notice.html">系统通知<span class="badge badge-danger">27</span></a>
@@ -102,7 +102,7 @@
 							</div>
 						</div>
 					</div>
-				</div>		
+				</div>
 				<!-- 提示框 -->
 				<div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="hintModalLabel" aria-hidden="true">
 					<div class="modal-dialog modal-lg" role="document">
@@ -115,8 +115,8 @@
 							</div>
 						</div>
 					</div>
-				</div>				
-				
+				</div>
+
 				<!-- 私信列表 -->
 				<ul class="list-unstyled">
 					<li class="media pb-3 pt-3 mb-3 border-bottom position-relative" th:each="map:${conversations}">
@@ -222,7 +222,7 @@
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
-	<script src="@{/js/global.js}"></script>
-	<script src="@{/js/letter.js}"></script>
+	<script th:src="@{/js/global.js}"></script>
+	<script th:src="@{/js/letter.js}"></script>
 </body>
 </html>
