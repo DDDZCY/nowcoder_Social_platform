@@ -1,8 +1,10 @@
 package com.nowcode.community;
 
 import com.nowcode.community.Dao.DiscussPostMapper;
+import com.nowcode.community.Dao.MessageMapper;
 import com.nowcode.community.Dao.UserMapper;
 import com.nowcode.community.entity.DiscussPost;
+import com.nowcode.community.entity.Message;
 import com.nowcode.community.entity.User;
 
 import org.junit.jupiter.api.Test;
@@ -78,5 +80,37 @@ public class testMappers {
         logger.debug("debug");
         logger.info("info");
         logger.warn("warn");
+    }
+
+    @Test
+    public void testSelectDiscussPost(){
+       DiscussPost discussPost = discussPostMapper.selectDiscussPostById(275);
+       System.out.println(discussPost);
+
+    }
+
+
+    @Autowired
+    private MessageMapper messageMapper;
+
+    @Test
+    public void testLetter(){
+        List<Message> list = messageMapper.selectConversations(111,0,20);
+        for(Message message :list){
+            System.out.println(message);
+        }
+        int count = messageMapper.selectConversationCount(111);
+        System.out.println(count);
+
+        list = messageMapper.selectLetters("111_112",0,20);
+        for(Message message :list){
+            System.out.println(message);
+        }
+
+        count = messageMapper.selectLetterCount("111_112");
+        System.out.println(count);
+
+        count = messageMapper.selectUnreadLetterCountUnread(111,null);
+        System.out.println(count);
     }
 }

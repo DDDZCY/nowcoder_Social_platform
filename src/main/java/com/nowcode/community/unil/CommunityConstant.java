@@ -28,4 +28,14 @@ public interface CommunityConstant {
      */
     long REMEMBER_EXPIRED_SECONDS= 3600 * 24 * 120;
 
+    /**
+     评论类型：帖子评论
+     */
+    int ENTITY_TYPE_COMMENT= 1;
+
+    /**
+     评论类型：评论的回复
+     */
+    int ENTITY_TYPE_REPLY= 2;
+
 }
