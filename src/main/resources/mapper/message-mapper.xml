@@ -8,10 +8,13 @@
         id, from_id, to_id, conversation_id, content, status,create_time
     </sql>
 
+<<<<<<< HEAD
     <sql id="insertFields">
          from_id, to_id, conversation_id, content, status,create_time
     </sql>
 
+=======
+>>>>>>> origin/master
     <select id="selectConversations" resultType="Message">
         select <include refid="selectFields"></include>
         from message
@@ -67,6 +70,7 @@
         </if>
     </select>
 
+<<<<<<< HEAD
     <insert id="insertLetter" parameterType="Message" keyProperty="id">
         insert into message(<include refid="insertFields"></include>)
         values(#{fromId},#{toId},#{conversationId},#{content},#{status},#{createTime})
@@ -79,4 +83,6 @@
         </foreach>
     </update>
 
+=======
+>>>>>>> origin/master
 </mapper>

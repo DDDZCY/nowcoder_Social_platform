@@ -22,13 +22,6 @@ public interface MessageMapper {
     int selectUnreadLetterCountUnread(int userId, String conversationId);
 
 
-    //添加消息
-    int insertLetter(Message message);
-
-    //修改已读
-
-    int updateStatus(List<Integer> ides, int status);
-
 
 
 }
