@@ -28,6 +28,7 @@ public class UserService implements CommunityConstant {
     private MailClient mailClient;
     @Autowired
     private LoginTicketMapper loginTicketMapper;
+
     @Autowired
     private TemplateEngine templateEngine;
     @Value("${community.path.domin}")
