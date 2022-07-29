@@ -29,7 +29,7 @@ public class communityUtil {
         json.put("Msg",Msg);
         if(map != null){
             for(String key:map.keySet()){
-                json.put("key",map.get(key));
+                json.put(key,map.get(key));
             }
         }
         return json.toJSONString();

@@ -46,6 +46,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
             modelAndView.addObject("loginUser",user);
             modelAndView.addObject("loginUserHeaderUrl",user.getHeaderUrl());
             modelAndView.addObject("loginUserUsername",user.getUsername());
+            modelAndView.addObject("loginUserUserId",user.getId());
         }
     }
 

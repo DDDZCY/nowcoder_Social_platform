@@ -6,17 +6,17 @@ import com.nowcode.community.config.HostHolder;
 import com.nowcode.community.entity.Message;
 import com.nowcode.community.entity.Page;
 import com.nowcode.community.entity.User;
+import com.nowcode.community.unil.communityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class MessageController {
@@ -74,10 +74,25 @@ public class MessageController {
                 letters.add(map);
             }
         }
+        List<Integer> ids = findUnreadLetter(letterList);
+        if(!ids.isEmpty()){
+            messageService.updateLetterStatus(ids,1);
+        }
         model.addAttribute("letters",letters);
         model.addAttribute("target", getTargetUser(conversationId));
         return "/site/letter-detail";
 
+    }
+    private List<Integer> findUnreadLetter(List<Message> messageList){
+        List<Integer> ids = new ArrayList<>();
+        if(messageList != null){
+            for(Message message : messageList){
+                if(message.getToId() == hostHolder.getUser().getId() && message.getStatus() == 0){
+                    ids.add(message.getId());
+                }
+            }
+        }
+        return ids;
     }
 
     private User getTargetUser(String conversationId){
@@ -89,5 +104,35 @@ public class MessageController {
         }
         else return userService.findUserById(id0);
     }
+    @RequestMapping(path = "/letter/send",method = RequestMethod.POST)
+    @ResponseBody
+    public String sendLetter(String toName,String content){
+
+        User target = userService.findUserByName(toName);
+        if(StringUtils.isEmpty(toName)){
+            return communityUtil.getJSONString(1,"未填写发送人!");
+        }
+        if(target == null){
+            return communityUtil.getJSONString(1,"不存在该用户");
+        }
+        if(StringUtils.isEmpty(content)){
+            return communityUtil.getJSONString(1,"发送信息不能为空!");
+        }
+        if(hostHolder.getUser().getId() == target.getId() ){
+            return communityUtil.getJSONString(1,"不能给自己发私信!");
+        }
+        Message message = new Message();
+        message.setFromId(hostHolder.getUser().getId());
+        message.setToId(userService.findUserByName(toName).getId());
+        message.setContent(content);
+        message.setCreateTime(new Date());
+        String conversationId = message.getFromId() < message.getToId() ? message.getFromId() +"_"+ message.getToId() :
+                message.getToId()+"_"+message.getFromId();
+        message.setConversationId(conversationId);
+        messageService.addLetter(message);
+        return communityUtil.getJSONString(0);
+    }
+
+
 
 }

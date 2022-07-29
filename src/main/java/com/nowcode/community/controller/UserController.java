@@ -1,6 +1,8 @@
 package com.nowcode.community.controller;
 
 
+import com.nowcode.community.Service.FollowerService;
+import com.nowcode.community.Service.LikeService;
 import com.nowcode.community.Service.UserService;
 import com.nowcode.community.annotation.LoginRequired;
 import com.nowcode.community.config.HostHolder;
@@ -28,7 +30,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController implements CommunityConstant{
 
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -45,7 +47,11 @@ public class UserController {
     private HostHolder hostHolder;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
+    @Autowired
+    private LikeService likeService;
+    @Autowired
+    private FollowerService followerService;
 
     @LoginRequired
     @RequestMapping(path = "/setting",method = RequestMethod.GET)
@@ -128,5 +134,31 @@ public class UserController {
             return "/site/setting";
         }
 
+    }
+
+    //获取用户主页
+    @RequestMapping(path = "/profile/{userId}",method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model){
+        User user = userService.findUserById(userId);
+        if(user == null){
+            throw new RuntimeException("不存在该用户");
+        }
+        //获赞数量
+        int getLikeCount = likeService.findUserGetLikeCount(userId);
+        model.addAttribute("getLikeCount",getLikeCount);
+        model.addAttribute("user",user);
+
+        //获取关注数量等
+        long followerCount = followerService.getFollowerCount(ENTITY_TYPE_USER,userId);
+        long follweeCount = followerService.getFollweeCount(userId,ENTITY_TYPE_USER);
+        User loginUser = hostHolder.getUser();
+        int hasFollowed = 0;
+        if(loginUser != null){
+             hasFollowed = followerService.hasFollowed(loginUser.getId(),ENTITY_TYPE_USER,userId) ? 1:0;
+        }
+        model.addAttribute("hasFollowed",hasFollowed);
+        model.addAttribute("followerCount",followerCount);
+        model.addAttribute("follweeCount",follweeCount);
+        return "/site/profile";
     }
 }
