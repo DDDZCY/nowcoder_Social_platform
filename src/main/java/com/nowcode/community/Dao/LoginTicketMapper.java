@@ -5,6 +5,7 @@ import com.nowcode.community.entity.LoginTicket;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
+@Deprecated
 public interface LoginTicketMapper {
 
 

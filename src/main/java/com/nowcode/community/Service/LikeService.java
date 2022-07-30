@@ -1,7 +1,8 @@
 package com.nowcode.community.Service;
 
-import com.nowcode.community.config.HostHolder;
-import com.nowcode.community.unil.LikeUtil;
+
+
+import com.nowcode.community.unil.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
@@ -19,8 +20,8 @@ public class LikeService {
         redisTemplate.execute(new SessionCallback() {
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {
-                String entityKey = LikeUtil.getLikesKey(entityType,entityId);
-                String authorKey = LikeUtil.getAuthorKey(authorId);
+                String entityKey = RedisKeyUtil.getLikesKey(entityType,entityId);
+                String authorKey = RedisKeyUtil.getAuthorKey(authorId);
                 boolean is = operations.opsForSet().isMember(entityKey,userId);
                 operations.multi();
                 if(is){
@@ -39,19 +40,19 @@ public class LikeService {
     //获取点赞数量
 
     public long getLikeCount(int entityType, int entityId){
-        String key = LikeUtil.getLikesKey(entityType,entityId);
+        String key = RedisKeyUtil.getLikesKey(entityType,entityId);
         return redisTemplate.opsForSet().size(key);
     }
 
     //获取点赞状态
     public int getLikeStatus(int userId,int entityType, int entityId){
-        String key = LikeUtil.getLikesKey(entityType,entityId);
+        String key = RedisKeyUtil.getLikesKey(entityType,entityId);
         return redisTemplate.opsForSet().isMember(key,userId) ? 1 : 0;
     }
 
     //查询某个用户获得的赞
     public int findUserGetLikeCount(int userId){
-        String authorKey = LikeUtil.getAuthorKey(userId);
+        String authorKey = RedisKeyUtil.getAuthorKey(userId);
         Integer getLikeCount = (Integer) redisTemplate.opsForValue().get(authorKey);
         return getLikeCount == null? 0: getLikeCount.intValue();
     }

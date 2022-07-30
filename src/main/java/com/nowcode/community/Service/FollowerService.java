@@ -3,7 +3,8 @@ package com.nowcode.community.Service;
 
 import com.nowcode.community.entity.User;
 import com.nowcode.community.unil.CommunityConstant;
-import com.nowcode.community.unil.LikeUtil;
+
+import com.nowcode.community.unil.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
@@ -24,8 +25,8 @@ public class FollowerService implements CommunityConstant {
         redisTemplate.execute(new SessionCallback() {
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {
-                String followerKey = LikeUtil.getFollowerKey(entityType,entityId);
-                String followeeKey = LikeUtil.getFolloweeKey(userId,entityType);
+                String followerKey = RedisKeyUtil.getFollowerKey(entityType,entityId);
+                String followeeKey = RedisKeyUtil.getFolloweeKey(userId,entityType);
                 boolean hasFollowed = hasFollowed(userId,entityType,entityId);
                 operations.multi();
                 if(hasFollowed){
@@ -42,26 +43,26 @@ public class FollowerService implements CommunityConstant {
     }
 
     public boolean hasFollowed(int userId, int entityType, int entityId){
-        String followerKey = LikeUtil.getFollowerKey(entityType,entityId);
+        String followerKey = RedisKeyUtil.getFollowerKey(entityType,entityId);
         return redisTemplate.opsForZSet().score(followerKey,userId) != null;
     }
 
     //获取粉丝数量
 
     public long getFollowerCount(int entityType, int entityId){
-        String followerKey = LikeUtil.getFollowerKey(entityType,entityId);
+        String followerKey = RedisKeyUtil.getFollowerKey(entityType,entityId);
         return redisTemplate.opsForZSet().zCard(followerKey);
     }
 
     //获取关注的数量
     public long getFollweeCount(int userId, int entityType){
-        String followeeKey = LikeUtil.getFolloweeKey(userId,entityType);
+        String followeeKey = RedisKeyUtil.getFolloweeKey(userId,entityType);
         return redisTemplate.opsForZSet().zCard(followeeKey);
     }
 
     //获取某人关注的人
     public List<Map<String, Object>> getFollowee(int userId, int offset, int limit){
-        String followeeKey = LikeUtil.getFolloweeKey(userId,ENTITY_TYPE_USER);
+        String followeeKey = RedisKeyUtil.getFolloweeKey(userId,ENTITY_TYPE_USER);
         Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(followeeKey,offset,offset+limit-1);
         if(targetIds == null){
             return null;
@@ -80,7 +81,7 @@ public class FollowerService implements CommunityConstant {
 
     //获取某人的粉丝
     public List<Map<String, Object>> getFollower(int userId, int offset, int limit){
-        String followerKey = LikeUtil.getFollowerKey(ENTITY_TYPE_USER,userId);
+        String followerKey = RedisKeyUtil.getFollowerKey(ENTITY_TYPE_USER,userId);
         Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(followerKey,offset,offset+limit-1);
         if(targetIds == null){
             return null;
